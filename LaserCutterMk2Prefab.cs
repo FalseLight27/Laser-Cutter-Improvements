@@ -45,7 +45,7 @@ namespace LaserCutterImprovements
 
         */
 
-        //TechType customTech = EnumHandler.AddEntry<TechType>("LaserCutterMk2").WithPdaInfo("Laser Cutter Mk 2", "Removes built-in safety features, allowing the Laser Cutter to be used on organic targets.", unlockedAtStart: false).WithIcon(SpriteManager.Get(TechType.LaserCutter));
+        
 
         /*
         public override string AssetsFolder => base.AssetsFolder;
@@ -91,6 +91,8 @@ namespace LaserCutterImprovements
                     "Laser Cutter Mk2",
                    "Removes built-in safety features, allowing the Laser Cutter to be used on organic targets.");
             */
+
+            TechType customTech = EnumHandler.AddEntry<TechType>("LaserCutterMk2").WithPdaInfo("Laser Cutter Mk 2", "Removes built-in safety features, allowing the Laser Cutter to be used on organic targets.").WithIcon(SpriteManager.Get(TechType.LaserCutter));
 
             Atlas.Sprite sprite = SpriteManager.Get(TechType.LaserCutter);
 

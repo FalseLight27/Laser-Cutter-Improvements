@@ -5,6 +5,7 @@
     using System.Collections.Generic;
     using BepInEx;
     using Nautilus;
+    using Nautilus.Handlers;
     using Nautilus.Assets.PrefabTemplates;
     using Nautilus.Assets;
     using Nautilus.Crafting;
@@ -99,6 +100,7 @@
 
             Atlas.Sprite sprite = SpriteManager.Get(TechType.LaserCutter);
 
+            TechType customTech = EnumHandler.AddEntry<TechType>("LaserCutterMk3").WithPdaInfo("Laser Cutter Mk3", "Increases laser power output to allow it to cut a variety of materials.").WithIcon(SpriteManager.Get(TechType.LaserCutter));
 
             PrefabInfo laserCutterMk3 = PrefabInfo.WithTechType("LaserCutterMk3", "Laser Cutter Mk3", "Increases laser power output to allow it to cut a variety of materials.")
                     .WithIcon(sprite)
