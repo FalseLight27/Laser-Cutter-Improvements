@@ -1,12 +1,11 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
-using SMLHelper.V2.Assets;
-using SMLHelper.V2.Crafting;
-using UWE;
-using Logger = QModManager.Utility.Logger;
-
-namespace LaserCutterImprovements
+﻿namespace LaserCutterImprovements
 {
+
+    using UnityEngine;    
+    using System.Collections.Generic;
+    
+    
+
     public class TechTypeUtils
     {
         public static Dictionary<string, TechType> ModTechTypes = new Dictionary<string, TechType>();
@@ -15,7 +14,7 @@ namespace LaserCutterImprovements
 
         internal static void AddModTechType(TechType techtype, GameObject prefab = null)
         {
-            Logger.Log(Logger.Level.Info, "Adding mod TechType" + techtype.AsString());
+            //Logger.Log(Logger.Level.Info, "Adding mod TechType" + techtype.AsString());
             string key = techtype.AsString(true);
             if (!ModTechTypes.ContainsKey(key))
             {

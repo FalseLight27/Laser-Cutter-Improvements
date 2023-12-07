@@ -4,11 +4,16 @@
 
 namespace LaserCutterImprovements
 {
-    using System.Linq;
     using UWE;
     using UnityEngine;
-    using Logger = QModManager.Utility.Logger;
     using HarmonyLib;
+    //using Logger = QModManager.Utility.Logger;
+
+    //using SMLHelper.V2.Assets;
+    //using SMLHelper.V2.Utility;
+    //using SMLHelper.V2.Crafting;   
+
+    //using SMLHelper.V2.Handlers;
 
 
     [RequireComponent(typeof(EnergyMixin))]
@@ -46,7 +51,7 @@ namespace LaserCutterImprovements
         {
             
             float LaserEnergyCost = 1f * Time.deltaTime / 2;
-            float LaserDamage = 30f * Time.deltaTime;            
+            float LaserDamage = 120f * Time.deltaTime;            
 
             energyMixin.ConsumeEnergy(LaserEnergyCost);            
 
@@ -181,8 +186,7 @@ namespace LaserCutterImprovements
             }
         }
 
-        [HarmonyPatch(typeof(LaserCutter))]
-        [HarmonyPatch("RandomizeIntensity")]
+        [HarmonyPatch(typeof(LaserCutter), "RandomizeIntensity")]
         internal class RandomizeIntensityTweak
         {
             [HarmonyPostfix]
@@ -201,6 +205,10 @@ namespace LaserCutterImprovements
             }
 
         }
+
+
+        
+
     }
 
 

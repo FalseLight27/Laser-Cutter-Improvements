@@ -1,17 +1,4 @@
-﻿using UnityEngine;
-using System;
-using System.IO;
-using System.Reflection;
-using System.Collections.Generic;
-
-using System.Text;
-using SMLHelper.V2.Assets;
-using SMLHelper.V2.Utility;
-using SMLHelper.V2.Crafting;
-using UWE;
-using System.Collections;
-using SMLHelper.V2.Handlers;
-
+﻿
 
 
 namespace LaserCutterImprovements
@@ -19,7 +6,23 @@ namespace LaserCutterImprovements
     using UWE;
     using UnityEngine;    
     using HarmonyLib;
-    using Logger = QModManager.Utility.Logger;
+   
+    
+    using System;
+    using System.IO;
+    using System.Reflection;
+    using System.Collections.Generic;
+
+    using System.Text;
+    
+    
+    using System.Collections;
+    using System.Linq;
+    using System.Threading.Tasks;
+    
+    
+    
+
 
     [RequireComponent(typeof(EnergyMixin))]
     
@@ -47,7 +50,7 @@ namespace LaserCutterImprovements
 
         private const float kCooldownDuration = 0.3f;
 
-        private const float jCooldownDuration = 0.4f;
+        private const float jCooldownDuration = 0.1f;
                        
         public FMOD_CustomLoopingEmitter loopHit;
 
@@ -69,7 +72,7 @@ namespace LaserCutterImprovements
             float LaserEnergyCost = 1f * Time.deltaTime / 3; // Base usage cost
             float vsBioEnergyCost = 1f * Time.deltaTime / 2; 
             float vsEnviEnergyCost = 1f * Time.deltaTime;
-            float LaserDamage = 40f * Time.deltaTime;                                               
+            float LaserDamage = 200f * Time.deltaTime;                                               
                                     
             GameObject gameObject = null;                        
 
@@ -117,8 +120,8 @@ namespace LaserCutterImprovements
                         timeCanMineAgain = Time.time + jCooldownDuration;
                         var entityRoot = Utils.GetEntityRoot(gameObject) ?? gameObject;
                         entityRoot?.GetComponentInChildren<Drillable>()?.OnDrill(vector, null, out var _);
-                        ErrorMessage.AddMessage("ONDRILL");
-                        Logger.Log(Logger.Level.Debug, "ONDRILL");
+                        //ErrorMessage.AddMessage("ONDRILL");
+                        //Logger.Log(Logger.Level.Debug, "ONDRILL");
                     }                    
 
                     energyMixin.ConsumeEnergy(vsEnviEnergyCost);                   

@@ -1,17 +1,30 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
-using SMLHelper.V2.Assets;
-using SMLHelper.V2.Crafting;
-using UWE;
-
-
-namespace LaserCutterImprovements
+﻿namespace LaserCutterImprovements
 {
-     
-    internal class LaserCutterMk3Prefab : Equipable
+    using UWE;
+    using UnityEngine;            
+    using System.Collections.Generic;
+    using BepInEx;
+    using Nautilus;
+    using Nautilus.Assets.PrefabTemplates;
+    using Nautilus.Assets;
+    using Nautilus.Crafting;
+    using Nautilus.Assets.Gadgets;
+    using Ingredient = CraftData.Ingredient;
+
+    //using SMLHelper.V2.Assets;
+    //using SMLHelper.V2.Utility;
+    //using SMLHelper.V2.Crafting;
+    //using SMLHelper.V2.Handlers;
+
+
+
+
+
+
+    public class LaserCutterMk3Prefab
     {
         
-
+        /*
         public LaserCutterMk3Prefab(string classId, string friendlyName, string description) : base("LaserCutterMk3", "Laser Cutter Mk 3", "MINING LASER")
            
         {
@@ -72,9 +85,129 @@ namespace LaserCutterImprovements
                 };
             }
 
-       
+        */
+
+        public static void Patch()
+        {
+            /*
+            var laserCutterMk3 = new CustomPrefab(
+                    "LaserCutterMk3",
+                    "Laser Cutter Mk3",
+                    "Increases laser power output to allow it to cut a variety of materials");
+
+            */
+
+            Atlas.Sprite sprite = SpriteManager.Get(TechType.LaserCutter);
 
 
+            PrefabInfo laserCutterMk3 = PrefabInfo.WithTechType("LaserCutterMk3", "Laser Cutter Mk3", "Increases laser power output to allow it to cut a variety of materials.")
+                    .WithIcon(sprite)
+                    .WithSizeInInventory(new Vector2int(1, 1));                    
+
+            var cloneTemplate = new CloneTemplate(laserCutterMk3, TechType.LaserCutter);
+
+            cloneTemplate.ModifyPrefab += (gameObject) =>
+            {
+                /*
+                Renderer[] renderers = gameObject.GetComponentsInChildren<Renderer>();
+                foreach (Renderer rend in renderers)
+                {
+                    rend.material.color = new Color(55 / 255f, 178 / 255f, 212 / 255f);
+                }
+                */
+                gameObject.EnsureComponent<LaserCutter>();
+
+                /*
+                Main_Plugin.logger.LogInfo("Attaching Storage");
+                var coi = child.EnsureComponent<ChildObjectIdentifier>();
+                if (coi)
+                {
+
+                    coi.classId = "EnhancedGravTrapStorage";
+                    var storageContainer = coi.gameObject.EnsureComponent<StorageContainer>();
+                    storageContainer.prefabRoot = gameObject;
+                    storageContainer.storageRoot = coi;
+
+                    storageContainer.width = Main_Plugin.GravTrapStorageWidth.Value;
+                    storageContainer.height = Main_Plugin.GravTrapStorageHeight.Value;
+                    storageContainer.storageLabel = "Grav trap";
+                    storageContainer.errorSound = null;
+                    child.SetActive(true);
+                }
+                else
+                {
+                    Main_Plugin.logger.LogInfo("Failed to add COI. Unable to attach storage!");
+                }
+
+                PickupableStorage pickupableStorage = coi.gameObject.EnsureComponent<PickupableStorage>();
+                pickupableStorage.pickupable = gameObject.GetComponent<Pickupable>();
+                pickupableStorage.storageContainer = coi.GetComponent<StorageContainer>();
+                */
+            };
+
+            var lasercuttermk2 = TechTypeUtils.GetModTechType("LaserCutterMk2");
+
+            var recipe = new RecipeData()
+            {
+                craftAmount = 1,
+                Ingredients =
+    {
+                        new Ingredient(lasercuttermk2, 1),
+                        new Ingredient(TechType.ComputerChip, 1),
+                        new Ingredient(TechType.Magnetite, 1),
+                        new Ingredient(TechType.Sulphur, 1),
+                        new Ingredient(TechType.AluminumOxide, 1),
+                        new Ingredient(TechType.Diamond, 1),
+    },
+            };
+
+            var prefab = new CustomPrefab(laserCutterMk3);
+
+            prefab.SetGameObject(cloneTemplate);
+            prefab.SetUnlock(TechType.LaserCutter);
+            prefab.SetEquipment(EquipmentType.Hand);
+            prefab.SetPdaGroupCategory(TechGroup.Personal, TechCategory.Tools);
+
+            prefab.SetRecipe(recipe)
+                .WithFabricatorType(CraftTree.Type.Workbench)
+                .WithStepsToFabricatorTab("Tools")
+                .WithCraftingTime(5f);
+
+            
+
+            
+
+            /*
+
+        protected override TechData GetBlueprintRecipe()
+            {
+                return new TechData()
+                {
+                        craftAmount = 1,
+                        Ingredients =
+                        {
+                        new Ingredient(TechType.LaserCutter, 1),
+                        new Ingredient(TechType.WiringKit, 1),
+                        }
+                };
+            }
+        */
+
+            // Add a recipe for our item, as well as add it to the Moonpool fabricator and Seamoth modules tab
+            prefab.SetRecipe(recipe)
+        .WithFabricatorType(CraftTree.Type.Workbench)
+        .WithStepsToFabricatorTab("Tools")
+        .WithCraftingTime(3f);
+
+            //public override float CraftingTime => 3f;
+
+            // Register our item to the game
+            prefab.Register();
+
+
+        }
+
+        /*
 
         public override GameObject GetGameObject()
                 {
@@ -113,7 +246,7 @@ namespace LaserCutterImprovements
 
         
 
-        
+        */
 
             
             

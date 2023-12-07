@@ -1,21 +1,41 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
-using SMLHelper.V2.Assets;
-using SMLHelper.V2.Crafting;
-using UWE;
+﻿
 
 
 namespace LaserCutterImprovements
 {
+    using UWE;
+    using UnityEngine;    
+    using HarmonyLib;
+   
 
-     
-    internal class LaserCutterMk2Prefab : Equipable
+
+    using BepInEx;
+    using Nautilus.Assets.PrefabTemplates;
+    using Nautilus.Assets;
+    using Nautilus.Crafting;
+    using Nautilus.Assets.Gadgets;
+    using Ingredient = CraftData.Ingredient;
+    using Nautilus.Utility;
+    using Nautilus.Handlers;
+    using Nautilus.Json;
+    using Nautilus.Commands;
+    using Nautilus.Options;
+    using Nautilus.Extensions;
+    using Nautilus.FMod;
+    
+    // using SMLHelper.V2.Assets;
+    //using SMLHelper.V2.Utility;
+    //using SMLHelper.V2.Crafting;
+
+
+
+    public class LaserCutterMk2Prefab
     {
-
+        /*
        public LaserCutterMk2Prefab(string classId, string friendlyName, string description) : base("LaserCutterMk2", "Laser Cutter Mk 2", "Removes built-in safety features, allowing the Laser Cutter to be used on organic targets")
             
         {
-
+            //CRITICAL
             OnFinishedPatching += () =>
             {                
                 TechTypeUtils.AddModTechType(this.TechType);
@@ -23,6 +43,11 @@ namespace LaserCutterImprovements
 
         }
 
+        */
+
+        //TechType customTech = EnumHandler.AddEntry<TechType>("LaserCutterMk2").WithPdaInfo("Laser Cutter Mk 2", "Removes built-in safety features, allowing the Laser Cutter to be used on organic targets.", unlockedAtStart: false).WithIcon(SpriteManager.Get(TechType.LaserCutter));
+
+        /*
         public override string AssetsFolder => base.AssetsFolder;
 
         public override string IconFileName => base.IconFileName;
@@ -35,28 +60,132 @@ namespace LaserCutterImprovements
 
         public override WorldEntityInfo EntityInfo => base.EntityInfo;
 
-        public override bool HasSprite => base.HasSprite;
-
-        public override TechType RequiredForUnlock => TechType.LaserCutter;
+        public override bool HasSprite => base.HasSprite;        
 
         public override bool AddScannerEntry => base.AddScannerEntry;
 
        public override PDAEncyclopedia.EntryData EncyclopediaEntryData => base.EncyclopediaEntryData;
 
-        public override TechGroup GroupForPDA => TechGroup.Personal;
-
-        public override TechCategory CategoryForPDA => TechCategory.Tools;
+        
+                      
+        
 
         public override bool UnlockedAtStart => false;
 
         public override string DiscoverMessage => base.DiscoverMessage;
 
-        public override float CraftingTime => 3f;
-
-        public override EquipmentType EquipmentType => EquipmentType.Hand;               
+        */
 
 
 
+
+        public static TechType techType;
+
+        
+
+        public static void Patch()
+        {
+            /*
+            var laserCutterMk2 = new CustomPrefab(
+                    "LaserCutterMk2",
+                    "Laser Cutter Mk2",
+                   "Removes built-in safety features, allowing the Laser Cutter to be used on organic targets.");
+            */
+
+            Atlas.Sprite sprite = SpriteManager.Get(TechType.LaserCutter);
+
+
+            PrefabInfo laserCutterMk2 = PrefabInfo.WithTechType("LaserCutterMk2", "Laser Cutter Mk2", "Removes built-in safety features, allowing the Laser Cutter to be used on organic targets.")
+                    .WithIcon(sprite)
+                    .WithSizeInInventory(new Vector2int(1, 1));
+
+            var cloneTemplate = new CloneTemplate(laserCutterMk2, TechType.LaserCutter);
+
+            cloneTemplate.ModifyPrefab += (gameObject) =>
+            {
+                /*
+                Renderer[] renderers = gameObject.GetComponentsInChildren<Renderer>();
+                foreach (Renderer rend in renderers)
+                {
+                    rend.material.color = new Color(55 / 255f, 178 / 255f, 212 / 255f);
+                }
+                */
+                gameObject.EnsureComponent<LaserCutter>();
+                
+                /*
+                Main_Plugin.logger.LogInfo("Attaching Storage");
+                var coi = child.EnsureComponent<ChildObjectIdentifier>();
+                if (coi)
+                {
+
+                    coi.classId = "EnhancedGravTrapStorage";
+                    var storageContainer = coi.gameObject.EnsureComponent<StorageContainer>();
+                    storageContainer.prefabRoot = gameObject;
+                    storageContainer.storageRoot = coi;
+
+                    storageContainer.width = Main_Plugin.GravTrapStorageWidth.Value;
+                    storageContainer.height = Main_Plugin.GravTrapStorageHeight.Value;
+                    storageContainer.storageLabel = "Grav trap";
+                    storageContainer.errorSound = null;
+                    child.SetActive(true);
+                }
+                else
+                {
+                    Main_Plugin.logger.LogInfo("Failed to add COI. Unable to attach storage!");
+                }
+
+                PickupableStorage pickupableStorage = coi.gameObject.EnsureComponent<PickupableStorage>();
+                pickupableStorage.pickupable = gameObject.GetComponent<Pickupable>();
+                pickupableStorage.storageContainer = coi.GetComponent<StorageContainer>();
+                */
+            };
+
+            var recipe = new RecipeData()
+            {
+                craftAmount = 1,
+                Ingredients =
+    {
+                new Ingredient(TechType.LaserCutter, 1),
+                new Ingredient(TechType.WiringKit, 1),
+    },
+            };
+
+            var prefab = new CustomPrefab(laserCutterMk2);
+
+            prefab.SetGameObject(cloneTemplate);
+            prefab.SetUnlock(TechType.LaserCutter);
+            prefab.SetEquipment(EquipmentType.Hand);
+            prefab.SetPdaGroupCategory(TechGroup.Personal, TechCategory.Tools);
+
+            prefab.SetRecipe(recipe)
+                .WithFabricatorType(CraftTree.Type.Workbench)
+                .WithStepsToFabricatorTab("Tools")
+                .WithCraftingTime(3f);
+
+
+            // Set our prefab to a clone of the Seamoth electrical defense module
+            ////laserCutterMk2.SetGameObject(new CloneTemplate(laserCutterMk2.Info, TechType.LaserCutter));
+
+            // Make our item compatible with the seamoth module slot
+            ////laserCutterMk2.SetEquipment(EquipmentType.Hand).WithQuickSlotType(QuickSlotType.Selectable);
+
+            //public override EquipmentType EquipmentType => EquipmentType.Hand;
+
+            // Make the Vehicle upgrade console a requirement for our item's blueprint
+            ////ScanningGadget scanning = laserCutterMk2.SetUnlock(TechType.LaserCutter);
+
+            //public override TechType RequiredForUnlock => TechType.LaserCutter;
+
+            // Add our item to the Vehicle upgrades category
+            ////scanning.WithPdaGroupCategory(TechGroup.Personal, TechCategory.Tools);
+
+            //public override TechGroup GroupForPDA => TechGroup.Personal;
+            //public override TechCategory CategoryForPDA => TechCategory.Tools;
+
+
+            
+
+            /*
 
         protected override TechData GetBlueprintRecipe()
             {
@@ -70,9 +199,29 @@ namespace LaserCutterImprovements
                         }
                 };
             }
+        */
 
+            // Add a recipe for our item, as well as add it to the Moonpool fabricator and Seamoth modules tab
+            /*
+            laserCutterMk2.SetRecipe(recipe)
+        .WithFabricatorType(CraftTree.Type.Workbench)
+        .WithStepsToFabricatorTab("Tools")
+        .WithCraftingTime(3f);
+            */
+
+            //public override float CraftingTime => 3f;
+
+            // Register our item to the game
+            prefab.Register();
+
+
+        }
+
+
+
+        
        
-
+        /*
 
 
         public override GameObject GetGameObject()
@@ -110,7 +259,7 @@ namespace LaserCutterImprovements
         }
         public static Atlas.Sprite CustomSprite => SpriteManager.Get(TechType.LaserCutter);
 
-               
+       */        
 
 
     }
